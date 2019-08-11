@@ -1,0 +1,27 @@
+syntax = "proto3";
+package proto;
+
+import "google/protobuf/empty.proto";
+import "messages.proto";
+
+service CheckoutService{
+    rpc Checkout(User) returns (CheckoutResponse){}
+    rpc GetShippingCost(google.protobuf.Empty) returns (ShippingCostList){}
+}
+
+message CheckoutResponse {
+    bool status = 1;
+    string message = 2;
+    repeated Cart cart = 3;
+    ShippingCost shipping = 4;
+}
+
+message ShippingCostList {
+    ShippingCost shippingCost =  1;
+}
+
+message ShippingCost {
+    string from = 1;
+    string to = 2;
+    int32 price = 3;
+}

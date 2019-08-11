@@ -1,0 +1,15 @@
+syntax = "proto3";
+package proto;
+
+message User {
+    int32 id = 1;
+}
+
+message Cart {
+    string name = 1;
+    int32 qty = 2;
+}
+
+message CartList {
+    repeated Cart cart = 1;
+}

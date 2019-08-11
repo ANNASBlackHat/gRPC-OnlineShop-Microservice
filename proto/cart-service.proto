@@ -2,20 +2,17 @@ syntax = "proto3";
 
 package proto;
 
-import "google/protobuf/empty.proto";
+import "messages.proto";
 
 service CartService{
-    rpc AddCart(Cart) returns (Response){}
-    rpc GetCart(google.protobuf.Empty) returns (Cart) {}
+    rpc AddCart(AddCartRequest) returns (Response){}
+    rpc GetCart(User) returns (CartList) {}
+    rpc RemoveCart(User) returns (Response){}
 }
 
-message Cart {
-    string name = 1;
-    int32 qty = 2;
-}
-
-message CartList {
-    repeated Cart cart = 1;
+message AddCartRequest {
+    User user = 1;
+    Cart cart = 2;
 }
 
 message Response {

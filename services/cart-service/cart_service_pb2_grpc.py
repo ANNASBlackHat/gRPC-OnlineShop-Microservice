@@ -2,7 +2,7 @@
 import grpc
 
 import cart_service_pb2 as cart__service__pb2
-from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
+import messages_pb2 as messages__pb2
 
 
 class CartServiceStub(object):
@@ -17,13 +17,18 @@ class CartServiceStub(object):
     """
     self.AddCart = channel.unary_unary(
         '/proto.CartService/AddCart',
-        request_serializer=cart__service__pb2.Cart.SerializeToString,
+        request_serializer=cart__service__pb2.AddCartRequest.SerializeToString,
         response_deserializer=cart__service__pb2.Response.FromString,
         )
     self.GetCart = channel.unary_unary(
         '/proto.CartService/GetCart',
-        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-        response_deserializer=cart__service__pb2.Cart.FromString,
+        request_serializer=messages__pb2.User.SerializeToString,
+        response_deserializer=messages__pb2.CartList.FromString,
+        )
+    self.RemoveCart = channel.unary_unary(
+        '/proto.CartService/RemoveCart',
+        request_serializer=messages__pb2.User.SerializeToString,
+        response_deserializer=cart__service__pb2.Response.FromString,
         )
 
 
@@ -45,18 +50,30 @@ class CartServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def RemoveCart(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_CartServiceServicer_to_server(servicer, server):
   rpc_method_handlers = {
       'AddCart': grpc.unary_unary_rpc_method_handler(
           servicer.AddCart,
-          request_deserializer=cart__service__pb2.Cart.FromString,
+          request_deserializer=cart__service__pb2.AddCartRequest.FromString,
           response_serializer=cart__service__pb2.Response.SerializeToString,
       ),
       'GetCart': grpc.unary_unary_rpc_method_handler(
           servicer.GetCart,
-          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-          response_serializer=cart__service__pb2.Cart.SerializeToString,
+          request_deserializer=messages__pb2.User.FromString,
+          response_serializer=messages__pb2.CartList.SerializeToString,
+      ),
+      'RemoveCart': grpc.unary_unary_rpc_method_handler(
+          servicer.RemoveCart,
+          request_deserializer=messages__pb2.User.FromString,
+          response_serializer=cart__service__pb2.Response.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
