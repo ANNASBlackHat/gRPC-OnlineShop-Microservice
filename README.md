@@ -42,7 +42,7 @@ To run the application, run all services
 ```$xslt
 go run services/product-service/server.go
 node services/checkout-service/server.js
-python3 servies/cart-service/server.py
+python3 services/cart-service/server.py
 go run frontend/main.go
 ```
 
