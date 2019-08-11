@@ -45,7 +45,7 @@ node services/checkout-service/server.js
 python3 services/cart-service/server.py
 go run frontend/main.go
 ```
-This app in running on **port: 8080**
+This app is running on **port: 8080**
 
 ## Protobuf Generator
 
