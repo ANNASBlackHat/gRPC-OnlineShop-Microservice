@@ -1,0 +1,15 @@
+{
+  "name": "chekcout-service",
+  "version": "1.0.0",
+  "description": "app that serve checkout function",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "AnnasBlackHat",
+  "license": "ISC",
+  "dependencies": {
+    "grpc": "^1.22.2"
+  }
+}

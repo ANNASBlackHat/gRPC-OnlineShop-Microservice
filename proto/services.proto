@@ -1,0 +1,83 @@
+syntax = "proto3";
+package proto;
+
+import "google/protobuf/empty.proto";
+
+
+//-------------- Product Service --------------
+
+service ProductService {
+    rpc GetProductById (ProductRequest) returns (Product) {}
+    rpc GetProduct(google.protobuf.Empty) returns (ProductList) {}
+}
+
+message ProductRequest {
+    int32 id = 1;
+}
+
+message Product {
+    int32 id = 1;
+    string name = 2;
+    int32 price = 3;
+}
+
+message ProductList {
+    repeated Product product = 1;
+}
+
+
+//-------------- Cart Service --------------
+
+service CartService{
+    rpc AddCart(AddCartRequest) returns (Response){}
+    rpc GetCart(User) returns (CartList) {}
+    rpc RemoveCart(User) returns (Response){}
+}
+
+message AddCartRequest {
+    User user = 1;
+    Cart cart = 2;
+}
+
+message Response {
+    bool status = 1;
+    string message = 2;
+}
+
+message User {
+    int32 id = 1;
+}
+
+message Cart {
+    string name = 1;
+    int32 qty = 2;
+}
+
+message CartList {
+    repeated Cart cart = 1;
+}
+
+
+//-------------- Checkout Service --------------
+
+service CheckoutService{
+    rpc Checkout(User) returns (CheckoutResponse){}
+    rpc GetShippingCost(google.protobuf.Empty) returns (ShippingCostList){}
+}
+
+message CheckoutResponse {
+    bool status = 1;
+    string message = 2;
+    repeated Cart cart = 3;
+    ShippingCost shipping = 4;
+}
+
+message ShippingCostList {
+    ShippingCost shippingCost =  1;
+}
+
+message ShippingCost {
+    string from = 1;
+    string to = 2;
+    int32 price = 3;
+}

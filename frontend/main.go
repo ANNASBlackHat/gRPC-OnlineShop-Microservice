@@ -6,8 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net/http"
-	"olshop-microservice/frontend/proto"
-	pb "olshop-microservice/services/product-service/proto"
+	pb "olshop-microservice/frontend/proto"
 	"strconv"
 )
 
@@ -25,14 +24,14 @@ func main() {
 		log.Fatalf("failed to connect to service cart. %v", err)
 	}
 
-	clientCart := proto.NewCartServiceClient(connCart)
+	clientCart := pb.NewCartServiceClient(connCart)
 
 	connCheckout, err := grpc.Dial("localhost:50053", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("failed to connect to service cart. %v", err)
 	}
 
-	clientCheckout := proto.NewCheckoutServiceClient(connCheckout)
+	clientCheckout := pb.NewCheckoutServiceClient(connCheckout)
 
 	g := gin.Default()
 	g.GET("/product/:id", func(context *gin.Context) {
@@ -56,7 +55,7 @@ func main() {
 
 	g.GET("/cart/:userId", func(ctx *gin.Context) {
 		userId,_ := strconv.Atoi(ctx.Param("userId"))
-		user := &proto.User{Id:int32(userId)}
+		user := &pb.User{Id:int32(userId)}
 		if resp, err := clientCart.GetCart(ctx, user); err == nil {
 			ctx.JSON(http.StatusOK, gin.H{"success": true, "data": resp})
 		}else{
@@ -68,7 +67,7 @@ func main() {
 		userId,_ := strconv.Atoi(ctx.Param("userId"))
 		name := ctx.PostForm("name")
 		qty,_ := strconv.Atoi(ctx.PostForm("qty"))
-		cart := &proto.AddCartRequest{User: &proto.User{Id:int32(userId)}, Cart: &proto.Cart{Name: name, Qty:int32(qty)}}
+		cart := &pb.AddCartRequest{User: &pb.User{Id:int32(userId)}, Cart: &pb.Cart{Name: name, Qty:int32(qty)}}
 		if resp, err := clientCart.AddCart(ctx, cart); err == nil {
 			ctx.JSON(http.StatusOK, gin.H{"success": true, "data": resp})
 		}else{
@@ -78,7 +77,7 @@ func main() {
 
 	g.GET("/checkout/:userId", func(ctx *gin.Context) {
 		userId,_ := strconv.Atoi(ctx.Param("userId"))
-		if resp, err := clientCheckout.Checkout(ctx, &proto.User{Id:int32(userId)}); err == nil {
+		if resp, err := clientCheckout.Checkout(ctx, &pb.User{Id:int32(userId)}); err == nil {
 			ctx.JSON(http.StatusOK, resp)
 		}else{
 			ctx.JSON(http.StatusInternalServerError, gin.H{"success": false,"message": err.Error()})

@@ -1,5 +1,4 @@
-var PROTO_PATH = __dirname + '/../../proto/checkout-service.proto';
-var PROTO_CART_PATH = __dirname + '/../../proto/cart-service.proto';
+var PROTO_PATH = __dirname + '/../../proto/services.proto';
 
 var grpc = require('grpc');
 var protoLoader = require('@grpc/proto-loader');
@@ -11,19 +10,9 @@ var packageDefinition = protoLoader.loadSync(
         defaults: true,
         oneofs: true
     });
+var pb = grpc.loadPackageDefinition(packageDefinition).proto;
 
-var packageDefinitionCart = protoLoader.loadSync(
-    PROTO_CART_PATH,
-    {keepCase: true,
-        longs: String,
-        enums: String,
-        defaults: true,
-        oneofs: true
-    });
-var checkout_proto = grpc.loadPackageDefinition(packageDefinition).proto;
-var cart_proto = grpc.loadPackageDefinition(packageDefinitionCart).proto;
-
-var client = new cart_proto.CartService('localhost:50052',
+var client = new pb.CartService('localhost:50052',
     grpc.credentials.createInsecure());
 
 function Checkout(call, callback) {
@@ -42,7 +31,7 @@ function Checkout(call, callback) {
 
 function main() {
     var server = new grpc.Server();
-    server.addService(checkout_proto.CheckoutService.service, {Checkout: Checkout});
+    server.addService(pb.CheckoutService.service, {Checkout: Checkout});
     server.bind('0.0.0.0:50053', grpc.ServerCredentials.createInsecure());
     server.start();
 }
