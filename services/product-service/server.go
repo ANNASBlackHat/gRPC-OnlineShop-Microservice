@@ -4,12 +4,18 @@ import (
 	"context"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"log"
 	"net"
 	pb "olshop-microservice/services/product-service/proto"
 )
 
 type server struct{}
+
+var (
+	crt = "ssl/server.crt"
+	key = "ssl/server.key"
+)
 
 var products []*pb.Product
 
@@ -28,7 +34,13 @@ func main() {
 		log.Fatalf("failed to listen to port 1919. %v", err)
 	}
 
-	srv := grpc.NewServer()
+	// Create the TLS credentials
+	creds, err := credentials.NewServerTLSFromFile(crt, key)
+	if err != nil {
+		log.Fatalf("could not load TLS keys: %s", err)
+	}
+
+	srv := grpc.NewServer(grpc.Creds(creds))
 	pb.RegisterProductServiceServer(srv, &server{})
 	if err := srv.Serve(listener); err != nil {
 		log.Fatalf("Failed to server : %v", err)

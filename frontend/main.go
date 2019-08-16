@@ -4,14 +4,22 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"log"
 	"net/http"
 	pb "olshop-microservice/frontend/proto"
 	"strconv"
 )
 
+var cert = "ssl/server.crt"
+
 func main() {
-	connProduct, err  := grpc.Dial("localhost:1919", grpc.WithInsecure())
+	creds, err := credentials.NewClientTLSFromFile(cert, "")
+	if err != nil {
+		log.Fatalf("could not load tls cert: %s", err)
+	}
+
+	connProduct, err  := grpc.Dial("localhost:1919", grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Fatalf("failed to connect to service product. %v", err)
 	}

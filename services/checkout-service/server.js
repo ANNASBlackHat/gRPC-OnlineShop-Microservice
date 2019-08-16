@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 var PROTO_PATH = __dirname + '/../../proto/services.proto';
 
 var grpc = require('grpc');
@@ -12,11 +14,9 @@ var packageDefinition = protoLoader.loadSync(
     });
 var pb = grpc.loadPackageDefinition(packageDefinition).proto;
 
-var client = new pb.CartService('localhost:50052',
-    grpc.credentials.createInsecure());
-
 function Checkout(call, callback) {
     const userId = call.request.id
+    var client = new pb.CartService('localhost:50052', grpc.credentials.createInsecure());
     client.GetCart({id: userId}, function (err, response) {
         console.log(response);
         client.RemoveCart({id:userId}, function(err, response){})
@@ -32,7 +32,13 @@ function Checkout(call, callback) {
 function main() {
     const server = new grpc.Server();
     server.addService(pb.CheckoutService.service, {Checkout: Checkout});
-    server.bind('0.0.0.0:50053', grpc.ServerCredentials.createInsecure());
+    server.bind('0.0.0.0:50053', grpc.ServerCredentials.createSsl(
+        null,
+        [{
+            private_key: fs.readFileSync('ssl/server.key'),
+            cert_chain: fs.readFileSync('ssl/server.crt')
+        }]
+    ));
     server.start();
 }
 

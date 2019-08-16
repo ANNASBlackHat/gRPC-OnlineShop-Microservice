@@ -12,6 +12,7 @@ _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 r = redis.Redis(host='localhost', port=6379, db=0)
 
+
 class Cart(services_pb2_grpc.CartServiceServicer):
 
     def AddCart(self, request, context):
@@ -19,7 +20,7 @@ class Cart(services_pb2_grpc.CartServiceServicer):
         cart_json = r.get('cart:{}'.format(user_id))
         cart_arr = []
         if cart_json is not None:
-            cart_arr = json.loads(cart_json)    
+            cart_arr = json.loads(cart_json)
 
         cart_arr.append({"name": request.cart.name, "qty": request.cart.qty})
         cart_json = json.dumps(cart_arr)
@@ -44,10 +45,19 @@ class Cart(services_pb2_grpc.CartServiceServicer):
         cart_json = r.delete('cart:{}'.format(user_id))
         return services_pb2.Response(status=True, message="success")
 
+
 def serve():
+    with open('ssl/server.key', 'rb') as f:
+        private_key = f.read()
+
+    with open('ssl/server.crt', 'rb') as f:
+        certificate_chain = f.read()
+
+    server_credentials = grpc.ssl_server_credentials(((private_key, certificate_chain,),))
+
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server.add_secure_port('localhost:50052', server_credentials)
     services_pb2_grpc.add_CartServiceServicer_to_server(Cart(), server)
-    server.add_insecure_port('[::]:50052')
     server.start()
     try:
         while True:
