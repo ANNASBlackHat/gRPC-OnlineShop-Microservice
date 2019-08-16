@@ -18,7 +18,7 @@ class Cart(services_pb2_grpc.CartServiceServicer):
         user_id = request.user.id
         cart_json = r.get('cart:{}'.format(user_id))
         cart_arr = []
-        if (cart_json != None):
+        if cart_json is not None:
             cart_arr = json.loads(cart_json)    
 
         cart_arr.append({"name": request.cart.name, "qty": request.cart.qty})
@@ -31,7 +31,7 @@ class Cart(services_pb2_grpc.CartServiceServicer):
         cart_json = r.get('cart:{}'.format(user_id))
 
         cart_list = []
-        if cart_json != None:
+        if cart_json is not None:
             cart_arr = json.loads(cart_json)
             cart_list = [services_pb2.Cart(name=c["name"], qty=c["qty"]) for c in cart_arr]
         # for c in cart_arr:

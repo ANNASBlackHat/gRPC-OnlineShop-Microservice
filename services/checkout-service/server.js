@@ -30,7 +30,7 @@ function Checkout(call, callback) {
 
 
 function main() {
-    var server = new grpc.Server();
+    const server = new grpc.Server();
     server.addService(pb.CheckoutService.service, {Checkout: Checkout});
     server.bind('0.0.0.0:50053', grpc.ServerCredentials.createInsecure());
     server.start();
