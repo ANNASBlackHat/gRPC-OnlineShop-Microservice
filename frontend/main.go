@@ -27,14 +27,14 @@ func main() {
 	defer connProduct.Close()
 	clientProduct := pb.NewProductServiceClient(connProduct)
 
-	connCart, err := grpc.Dial("localhost:50052", grpc.WithInsecure())
+	connCart, err := grpc.Dial("localhost:50052", grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Fatalf("failed to connect to service cart. %v", err)
 	}
 
 	clientCart := pb.NewCartServiceClient(connCart)
 
-	connCheckout, err := grpc.Dial("localhost:50053", grpc.WithInsecure())
+	connCheckout, err := grpc.Dial("localhost:50053", grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Fatalf("failed to connect to service cart. %v", err)
 	}
