@@ -50,11 +50,42 @@ This app is running on **port: 8080**
 ## Authentication
 gRPC is supported authentication by default. And we will be using SSL/TLS authentication for the sake of simplicity.
 
+#### 1. Single TSL
+The most easiest way is using single tsl which will be using to all services. 
+To learn using single tls, checkout to branch `auth/ssl`
+
 **Creating SSL/TLS Certificates**
 ```$xslt
 mkdir ssl && cd ssl
 openssl req -newkey rsa:2048 -nodes -keyout server.key -x509 -days 365 -out server.crt
 ```
+
+Then try to run the application again
+
+#### 2. Mutual TLS
+The second way is using mutual tls, this mean every service will have their own certificate, but all certificates 
+generated  from single root CA.
+
+[certstrap](https://github.com/square/certstrap) will be our way to generate certificates. 
+
+Install certstrap
+```$xslt
+$ git clone https://github.com/square/certstrap
+$ cd certstrap
+$ ./build
+``` 
+
+Create a CA, server cert, and private key
+```$xslt
+$ bin/certstrap init --common-name "My Root CA"
+$ bin/certstrap request-cert --domain mydomain.com
+$ bin/certstrap sign --CA "My Root CA" mydomain.com
+$ bin/certstrap request-cert --common-name localhost --ip 127.0.0.1 
+$ bin/certstrap sign --CA "My Root CA" 127.0.0.1
+```
+
+
+
 
 ## Protobuf Generator
 
