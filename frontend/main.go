@@ -16,12 +16,12 @@ import (
 
 func main() {
 	certificate, err := tls.LoadX509KeyPair(
-		"../certstrap/out/localhost.crt",
-		"../certstrap/out/localhost.key",
+		"frontend/ssl/localhost.crt",
+		"frontend/ssl/localhost.key",
 	)
 
 	certPool := x509.NewCertPool()
-	bs, err := ioutil.ReadFile("../certstrap/out/Root_CA.crt")
+	bs, err := ioutil.ReadFile("ssl/Root_CA.crt")
 	if err != nil {
 		log.Fatalf("failed to read ca cert: %s", err)
 	}

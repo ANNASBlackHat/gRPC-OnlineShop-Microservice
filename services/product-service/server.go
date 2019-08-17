@@ -28,12 +28,12 @@ func main() {
 	)
 
 	certificate, err := tls.LoadX509KeyPair(
-		"../certstrap/out/mydomain.com.crt",
-		"../certstrap/out/mydomain.com.key",
+		"services/product-service/ssl/mydomain.com.crt",
+		"services/product-service/ssl/mydomain.com.key",
 	)
 
 	certPool := x509.NewCertPool()
-	bs, err := ioutil.ReadFile("../certstrap/out/Root_CA.crt")
+	bs, err := ioutil.ReadFile("ssl/Root_CA.crt")
 	if err != nil {
 		log.Fatalf("failed to read client ca cert: %s", err)
 	}
