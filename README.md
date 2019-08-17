@@ -32,6 +32,10 @@ microservices](./img/architecture-diagram.png)](./img/architecture-diagram.png)
 
 `qty`   : Item quantity
 
+```
+curl --request POST   --url http://localhost:8080/cart/1   --data 'name=Xiaomi&qty=3'
+```
+
 
 ## Installation
 Follow the instructions for installation process for each programming languages  https://grpc.io/docs/quickstart/
@@ -93,7 +97,7 @@ copy out/mydomain.* to directory : services/product-service/ssl
 
 the project structure should look like this :
 
-[![ssl project structure](./img/mutual-tls project structure.png)](./img/mutual-tls project structure.png)
+![](./img/mutual-tls project structure.png)
 
 
 ## Protobuf Generator
