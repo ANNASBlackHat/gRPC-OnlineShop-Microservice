@@ -93,7 +93,7 @@ copy out/mydomain.* to directory : services/product-service/ssl
 
 the project structure should look like this :
 
-[![ssl project structure](./img/mutual-tls project structure.png)](./img/mutual-tls project structure.png)
+[![ssl project structure](img/mutual-tls_project_structure.png)](img/mutual-tls_project_structure.png)
 
 
 ## Protobuf Generator
