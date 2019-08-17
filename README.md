@@ -47,6 +47,15 @@ go run frontend/main.go
 ```
 This app is running on **port: 8080**
 
+## Authentication
+gRPC is supported authentication by default. And we will be using SSL/TLS authentication for the sake of simplicity.
+
+**Creating SSL/TLS Certificates**
+```$xslt
+mkdir ssl && cd ssl
+openssl req -newkey rsa:2048 -nodes -keyout server.key -x509 -days 365 -out server.crt
+```
+
 ## Protobuf Generator
 
 Generate for Go
