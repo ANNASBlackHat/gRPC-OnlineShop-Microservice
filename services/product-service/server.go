@@ -2,8 +2,12 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"io/ioutil"
 	"log"
 	"net"
 	pb "olshop-microservice/services/product-service/proto"
@@ -23,12 +27,36 @@ func main() {
 		&pb.Product{Id: 5, Name: "Tempe", Price: 1000},
 	)
 
+	certificate, err := tls.LoadX509KeyPair(
+		"../certstrap/out/mydomain.com.crt",
+		"../certstrap/out/mydomain.com.key",
+	)
+
+	certPool := x509.NewCertPool()
+	bs, err := ioutil.ReadFile("../certstrap/out/Root_CA.crt")
+	if err != nil {
+		log.Fatalf("failed to read client ca cert: %s", err)
+	}
+
+	ok := certPool.AppendCertsFromPEM(bs)
+	if !ok {
+		log.Fatal("failed to append client certs")
+	}
+
+	tlsConfig := &tls.Config{
+		ClientAuth:   tls.RequireAndVerifyClientCert,
+		Certificates: []tls.Certificate{certificate},
+		ClientCAs:    certPool,
+	}
+
+	serverOption := grpc.Creds(credentials.NewTLS(tlsConfig))
+
 	listener, err := net.Listen("tcp", ":1919")
 	if err != nil {
 		log.Fatalf("failed to listen to port 1919. %v", err)
 	}
 
-	srv := grpc.NewServer()
+	srv := grpc.NewServer(serverOption)
 	pb.RegisterProductServiceServer(srv, &server{})
 	if err := srv.Serve(listener); err != nil {
 		log.Fatalf("Failed to server : %v", err)

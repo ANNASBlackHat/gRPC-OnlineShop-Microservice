@@ -1,9 +1,13 @@
 package main
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"io/ioutil"
 	"log"
 	"net/http"
 	pb "olshop-microservice/frontend/proto"
@@ -11,13 +15,39 @@ import (
 )
 
 func main() {
-	connProduct, err  := grpc.Dial("localhost:1919", grpc.WithInsecure())
+	certificate, err := tls.LoadX509KeyPair(
+		"../certstrap/out/localhost.crt",
+		"../certstrap/out/localhost.key",
+	)
+
+	certPool := x509.NewCertPool()
+	bs, err := ioutil.ReadFile("../certstrap/out/Root_CA.crt")
+	if err != nil {
+		log.Fatalf("failed to read ca cert: %s", err)
+	}
+
+	ok := certPool.AppendCertsFromPEM(bs)
+	if !ok {
+		log.Fatal("failed to append certs")
+	}
+
+	transportCreds := credentials.NewTLS(&tls.Config{
+		ServerName:   "mydomain.com", //
+		Certificates: []tls.Certificate{certificate},
+		RootCAs:      certPool,
+	})
+
+	dialOption := grpc.WithTransportCredentials(transportCreds)
+
+	connProduct, err  := grpc.Dial("localhost:1919", dialOption)
 	if err != nil {
 		log.Fatalf("failed to connect to service product. %v", err)
 	}
 
 	defer connProduct.Close()
 	clientProduct := pb.NewProductServiceClient(connProduct)
+
+	///------------------------------------------------------------------->>> Example only fo service-product
 
 	connCart, err := grpc.Dial("localhost:50052", grpc.WithInsecure())
 	if err != nil {
